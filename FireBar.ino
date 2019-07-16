@@ -27,7 +27,7 @@ void setup() {
 
 void checkLightLevelPot() {
 	int potLightLevel = analogRead(A1);
-	potLightLevel = map(potLightLevel, 0, 1023, 1, 255);
+	potLightLevel = map(potLightLevel, 0, 960, 1, 255);
 	//To avaoid flicker, only change level if +/-4 steps
 	if ((potLightLevelLast-potLightLevel > 4) || (potLightLevelLast-potLightLevel < -4)) {
 		Serial.print("Light level changed to ");
@@ -37,20 +37,22 @@ void checkLightLevelPot() {
 	}
 
 	int potSpeed = analogRead(A2);
-	potSpeed = map(potSpeed, 0, 1023, 255, 80);
+	potSpeed = map(potSpeed, 0, 960, 1000, 10);
 	//To avaoid flicker, only change speed if +/-4 steps
 	if ((potSpeedLast-potSpeed > 4) || (potSpeedLast-potSpeed < -4)) {
 		Serial.print("Speed changed to ");
 		Serial.println(potSpeed);
 		speed = potSpeed;
 		potSpeedLast = potSpeed;
+		changeMode();
 	}
 }
 
 void changeMode() {
 	Serial.println("Changed mode");
-	ws2812fx.resetSegments();
-	ws2812fx.setSegment(0, FIRE_START, FIRE_START+FIRE_START-1, FX_MODE_FIRE_FLICKER_INTENSE, 0xFF6600, speed*4, false);
+	ws2812fx.setSpeed(speed*14);
+	ws2812fx.setColor(0xFF6600);
+	ws2812fx.setMode(FX_MODE_FIRE_FLICKER_INTENSE);
 }
 
 void tick() {
@@ -62,4 +64,3 @@ void loop() {
 	tick();
 	delay(20);
 }
-
